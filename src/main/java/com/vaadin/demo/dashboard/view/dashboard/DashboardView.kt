@@ -40,14 +40,33 @@ class DashboardView : Panel(), View, DashboardEditListener {
         setSizeFull()
         DashboardEventBus.register(this)
 
-        root = VerticalLayout()
-        root.setSizeFull()
-        root.isSpacing = false
-        root.addStyleName("dashboard-view")
-        content = root
-        Responsive.makeResponsive(root)
+        root = verticalLayout {
+            setSizeFull(); isSpacing = false; styleName = "dashboard-view"; Responsive.makeResponsive(this)
 
-        root.addComponent(buildHeader())
+            horizontalLayout { // header
+                styleName = "viewheader"
+                titleLabel = label("Dashboard") {
+                    id = TITLE_ID
+                    setSizeUndefined()
+                    addStyleNames(ValoTheme.LABEL_H1, ValoTheme.LABEL_NO_MARGIN)
+                }
+                horizontalLayout {
+                    styleName = "toolbar"
+                    notificationsButton = notificationsButton {
+                        onLeftClick { event -> openNotificationsPopup(event) }
+                    }
+                    button { // edit
+                        id = EDIT_ID
+                        icon = FontAwesome.EDIT
+                        addStyleNames("icon-edit", ValoTheme.BUTTON_ICON_ONLY)
+                        description = "Edit Dashboard"
+                        onLeftClick {
+                            ui.addWindow(DashboardEdit(this@DashboardView, titleLabel.value))
+                        }
+                    }
+                }
+            }
+        }
 
         root.addComponent(buildSparklines())
 
@@ -61,10 +80,10 @@ class DashboardView : Panel(), View, DashboardEditListener {
     }
 
     private fun buildSparklines(): Component {
-        val sparks = CssLayout()
-        sparks.addStyleName("sparks")
-        sparks.setWidth("100%")
-        Responsive.makeResponsive(sparks)
+        val sparks = CssLayout().apply {
+            styleName = "sparks"; w = fillParent
+            Responsive.makeResponsive(this)
+        }
 
         var s = SparklineChart("Traffic", "K", "",
                 DummyDataGenerator.chartColors[0], 22, 20, 80)
@@ -83,33 +102,6 @@ class DashboardView : Panel(), View, DashboardEditListener {
         sparks.addComponent(s)
 
         return sparks
-    }
-
-    private fun buildHeader(): Component {
-        val header = HorizontalLayout().apply {
-            styleName = "viewheader"
-            titleLabel = label("Dashboard") {
-                id = TITLE_ID
-                setSizeUndefined()
-                addStyleNames(ValoTheme.LABEL_H1, ValoTheme.LABEL_NO_MARGIN)
-            }
-            horizontalLayout {
-                styleName = "toolbar"
-                notificationsButton = notificationsButton {
-                    onLeftClick { event -> openNotificationsPopup(event) }
-                }
-                button { // edit
-                    id = EDIT_ID
-                    icon = FontAwesome.EDIT
-                    addStyleNames("icon-edit", ValoTheme.BUTTON_ICON_ONLY)
-                    description = "Edit Dashboard"
-                    onLeftClick {
-                        ui.addWindow(DashboardEdit(this@DashboardView, titleLabel.value))
-                    }
-                }
-            }
-        }
-        return header
     }
 
     private fun buildContent(): Component {
