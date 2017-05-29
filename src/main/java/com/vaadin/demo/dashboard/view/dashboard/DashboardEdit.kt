@@ -35,6 +35,7 @@ class DashboardEdit(private val listener: DashboardEdit.DashboardEditListener, c
                 addStyleName("caption-on-left")
                 focus()
             }
+            // button bar
             horizontalLayout {
                 addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR)
                 w = fillParent
