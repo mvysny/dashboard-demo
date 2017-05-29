@@ -97,22 +97,20 @@ class DashboardView : Panel(), View, DashboardEditListener {
     }
 
     private fun buildHeader(): Component {
-        val header = HorizontalLayout()
-        header.addStyleName("viewheader")
-
-        titleLabel = Label("Dashboard")
-        titleLabel!!.id = TITLE_ID
-        titleLabel!!.setSizeUndefined()
-        titleLabel!!.addStyleName(ValoTheme.LABEL_H1)
-        titleLabel!!.addStyleName(ValoTheme.LABEL_NO_MARGIN)
-        header.addComponent(titleLabel)
-
-        notificationsButton = buildNotificationsButton()
-        val edit = buildEditButton()
-        val tools = HorizontalLayout(notificationsButton, edit)
-        tools.addStyleName("toolbar")
-        header.addComponent(tools)
-
+        val header = HorizontalLayout().apply {
+            styleName = "viewheader"
+            titleLabel = label("Dashboard") {
+                id = TITLE_ID
+                setSizeUndefined()
+                addStyleNames(ValoTheme.LABEL_H1, ValoTheme.LABEL_NO_MARGIN)
+            }
+            horizontalLayout {
+                styleName = "toolbar"
+                notificationsButton = buildNotificationsButton()
+                addComponent(notificationsButton)
+                addComponent(buildEditButton())
+            }
+        }
         return header
     }
 
@@ -130,22 +128,20 @@ class DashboardView : Panel(), View, DashboardEditListener {
         result.addStyleName(ValoTheme.BUTTON_ICON_ONLY)
         result.description = "Edit Dashboard"
         result.addClickListener {
-            ui.addWindow(
-                    DashboardEdit(this@DashboardView, titleLabel!!
-                            .value))
+            ui.addWindow(DashboardEdit(this@DashboardView, titleLabel.value))
         }
         return result
     }
 
     private fun buildContent(): Component {
         dashboardPanels = CssLayout()
-        dashboardPanels!!.addStyleName("dashboard-panels")
-        Responsive.makeResponsive(dashboardPanels!!)
+        dashboardPanels.addStyleName("dashboard-panels")
+        Responsive.makeResponsive(dashboardPanels)
 
-        dashboardPanels!!.addComponent(buildTopGrossingMovies())
-        dashboardPanels!!.addComponent(buildNotes())
-        dashboardPanels!!.addComponent(buildTop10TitlesByRevenue())
-        dashboardPanels!!.addComponent(buildPopularMovies())
+        dashboardPanels.addComponent(buildTopGrossingMovies())
+        dashboardPanels.addComponent(buildNotes())
+        dashboardPanels.addComponent(buildTop10TitlesByRevenue())
+        dashboardPanels.addComponent(buildPopularMovies())
 
         return dashboardPanels
     }
