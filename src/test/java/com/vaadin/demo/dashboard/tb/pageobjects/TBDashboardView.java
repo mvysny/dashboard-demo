@@ -16,17 +16,17 @@ public class TBDashboardView extends TestBenchTestCase {
     }
 
     public TBDashboardEdit openDashboardEdit() {
-        $(ButtonElement.class).id(DashboardView.EDIT_ID).click();
+        $(ButtonElement.class).id(DashboardView.Companion.getEDIT_ID()).click();
         return new TBDashboardEdit(driver);
     }
 
     public String getDashboardTitle() {
-        return $(LabelElement.class).id(DashboardView.TITLE_ID).getText();
+        return $(LabelElement.class).id(DashboardView.Companion.getTITLE_ID()).getText();
     }
 
     public int getUnreadNotificationsCount() {
         int result = 0;
-        String caption = $(ButtonElement.class).id(NotificationsButton.ID)
+        String caption = $(ButtonElement.class).id(NotificationsButton.Companion.getID())
                 .getCaption();
         if (caption != null && !caption.isEmpty()) {
             result = Integer.parseInt(caption);
@@ -35,7 +35,7 @@ public class TBDashboardView extends TestBenchTestCase {
     }
 
     public void openNotifications() {
-        $(ButtonElement.class).id(NotificationsButton.ID).click();
+        $(ButtonElement.class).id(NotificationsButton.Companion.getID()).click();
     }
 
 }
