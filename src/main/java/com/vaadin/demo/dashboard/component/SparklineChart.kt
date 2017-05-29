@@ -1,30 +1,14 @@
 package com.vaadin.demo.dashboard.component
 
 import com.github.vok.framework.vaadin.*
-import java.util.Arrays
-
-import org.apache.commons.lang3.ArrayUtils
-
 import com.vaadin.addon.charts.Chart
-import com.vaadin.addon.charts.model.AxisTitle
-import com.vaadin.addon.charts.model.ChartType
-import com.vaadin.addon.charts.model.Configuration
-import com.vaadin.addon.charts.model.Credits
-import com.vaadin.addon.charts.model.DashStyle
-import com.vaadin.addon.charts.model.DataLabels
-import com.vaadin.addon.charts.model.DataSeries
-import com.vaadin.addon.charts.model.DataSeriesItem
-import com.vaadin.addon.charts.model.Labels
-import com.vaadin.addon.charts.model.Legend
-import com.vaadin.addon.charts.model.Marker
-import com.vaadin.addon.charts.model.PlotOptionsLine
-import com.vaadin.addon.charts.model.XAxis
-import com.vaadin.addon.charts.model.YAxis
+import com.vaadin.addon.charts.model.*
 import com.vaadin.addon.charts.model.style.Color
 import com.vaadin.addon.charts.model.style.SolidColor
 import com.vaadin.demo.dashboard.data.dummy.DummyDataGenerator
-import com.vaadin.shared.ui.ContentMode
-import com.vaadin.ui.*
+import com.vaadin.ui.Alignment
+import com.vaadin.ui.HasComponents
+import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 
 class SparklineChart(name: String, unit: String,
@@ -35,37 +19,16 @@ class SparklineChart(name: String, unit: String,
         w = wrapContent; styleName = "spark"; isMargin = false; isSpacing = false
         defaultComponentAlignment = Alignment.TOP_CENTER
 
-        val values = DummyDataGenerator.randomSparklineValues(howManyPoints,
-                min, max)
+        val values: IntArray = DummyDataGenerator.randomSparklineValues(howManyPoints, min, max)
 
-        val current = Label(prefix + values[values.size - 1] + unit)
-        current.setSizeUndefined()
-        current.addStyleName(ValoTheme.LABEL_HUGE)
-        addComponent(current)
+        label("$prefix${values[values.size - 1]}$unit") { // current
+            w = wrapContent; styleName = ValoTheme.LABEL_HUGE
+        }
+        label(name) { // title
+            w = wrapContent; addStyleNames(ValoTheme.LABEL_SMALL, ValoTheme.LABEL_LIGHT)
+        }
 
-        val title = Label(name)
-        title.setSizeUndefined()
-        title.addStyleName(ValoTheme.LABEL_SMALL)
-        title.addStyleName(ValoTheme.LABEL_LIGHT)
-        addComponent(title)
-
-        addComponent(buildSparkline(values, color))
-
-        val vals = Arrays.asList(*ArrayUtils.toObject(values))
-        val highLow = Label(
-                "High <b>" + java.util.Collections.max(vals)
-                        + "</b> &nbsp;&nbsp;&nbsp; Low <b>"
-                        + java.util.Collections.min(vals) + "</b>",
-                ContentMode.HTML)
-        highLow.addStyleName(ValoTheme.LABEL_TINY)
-        highLow.addStyleName(ValoTheme.LABEL_LIGHT)
-        highLow.setSizeUndefined()
-        addComponent(highLow)
-
-    }
-
-    private fun buildSparkline(values: IntArray, color: Color): Component {
-        val spark = Chart().apply {
+        chart {
             w = 120.px; h = 40.px
 
             val series = DataSeries()
@@ -113,7 +76,11 @@ class SparklineChart(name: String, unit: String,
             }
         }
 
-        return spark
+        label { // highLow
+            html("High <b>${values.max()}</b> &nbsp;&nbsp;&nbsp; Low <b>${values.min()}</b>")
+            addStyleNames(ValoTheme.LABEL_TINY, ValoTheme.LABEL_LIGHT)
+            w = wrapContent
+        }
     }
 }
 
