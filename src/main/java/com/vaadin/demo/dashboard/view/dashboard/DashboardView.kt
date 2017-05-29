@@ -20,22 +20,11 @@ import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.server.FontAwesome
 import com.vaadin.server.Responsive
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
+import com.vaadin.ui.*
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
-import com.vaadin.ui.Component
-import com.vaadin.ui.CssLayout
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.MenuBar
 import com.vaadin.ui.MenuBar.Command
 import com.vaadin.ui.MenuBar.MenuItem
-import com.vaadin.ui.Notification
-import com.vaadin.ui.Panel
-import com.vaadin.ui.TextArea
-import com.vaadin.ui.VerticalLayout
-import com.vaadin.ui.Window
 import com.vaadin.ui.themes.ValoTheme
 
 class DashboardView : Panel(), View, DashboardEditListener {
@@ -106,31 +95,21 @@ class DashboardView : Panel(), View, DashboardEditListener {
             }
             horizontalLayout {
                 styleName = "toolbar"
-                notificationsButton = buildNotificationsButton()
-                addComponent(notificationsButton)
-                addComponent(buildEditButton())
+                notificationsButton = notificationsButton {
+                    onLeftClick { event -> openNotificationsPopup(event) }
+                }
+                button { // edit
+                    id = EDIT_ID
+                    icon = FontAwesome.EDIT
+                    addStyleNames("icon-edit", ValoTheme.BUTTON_ICON_ONLY)
+                    description = "Edit Dashboard"
+                    onLeftClick {
+                        ui.addWindow(DashboardEdit(this@DashboardView, titleLabel.value))
+                    }
+                }
             }
         }
         return header
-    }
-
-    private fun buildNotificationsButton(): NotificationsButton {
-        val result = NotificationsButton()
-        result.addClickListener { event -> openNotificationsPopup(event) }
-        return result
-    }
-
-    private fun buildEditButton(): Component {
-        val result = Button()
-        result.id = EDIT_ID
-        result.icon = FontAwesome.EDIT
-        result.addStyleName("icon-edit")
-        result.addStyleName(ValoTheme.BUTTON_ICON_ONLY)
-        result.description = "Edit Dashboard"
-        result.addClickListener {
-            ui.addWindow(DashboardEdit(this@DashboardView, titleLabel.value))
-        }
-        return result
     }
 
     private fun buildContent(): Component {
@@ -337,3 +316,5 @@ class NotificationsButton : Button() {
         val ID = "dashboard-notifications"
     }
 }
+
+fun HasComponents.notificationsButton(block: NotificationsButton.()->Unit) = init(NotificationsButton(), block)
