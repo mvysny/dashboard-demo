@@ -1,9 +1,6 @@
 package com.vaadin.demo.dashboard.view.dashboard
 
-import com.github.vok.framework.vaadin.addStyleNames
-import com.github.vok.framework.vaadin.px
-import com.github.vok.framework.vaadin.toggleStyleName
-import com.github.vok.framework.vaadin.w
+import com.github.vok.framework.vaadin.*
 import com.google.common.eventbus.Subscribe
 import com.vaadin.demo.dashboard.DashboardUI
 import com.vaadin.demo.dashboard.component.SparklineChart
@@ -181,48 +178,42 @@ class DashboardView : Panel(), View, DashboardEditListener {
 
     private fun createContentWrapper(content: Component): Component {
         val slot = CssLayout()
-        slot.setWidth("100%")
-        slot.addStyleName("dashboard-panel-slot")
+        slot.apply {
+            w = fillParent; styleName = "dashboard-panel-slot"
+            cssLayout { // card
+                w = fillParent; styleName = ValoTheme.LAYOUT_CARD
+                horizontalLayout { // toolbar
+                    w = fillParent; styleName = "dashboard-panel-toolbar"; isSpacing = false
 
-        val card = CssLayout()
-        card.setWidth("100%")
-        card.addStyleName(ValoTheme.LAYOUT_CARD)
-
-        val toolbar = HorizontalLayout()
-        toolbar.addStyleName("dashboard-panel-toolbar")
-        toolbar.setWidth("100%")
-        toolbar.isSpacing = false
-
-        val caption = Label(content.caption)
-        caption.addStyleName(ValoTheme.LABEL_H4)
-        caption.addStyleName(ValoTheme.LABEL_COLORED)
-        caption.addStyleName(ValoTheme.LABEL_NO_MARGIN)
-        content.caption = null
-
-        val tools = MenuBar()
-        tools.addStyleName(ValoTheme.MENUBAR_BORDERLESS)
-        val max = tools.addItem("", FontAwesome.EXPAND, Command { selectedItem ->
-            if (!slot.styleName.contains("max")) {
-                selectedItem.icon = FontAwesome.COMPRESS
-                toggleMaximized(slot, true)
-            } else {
-                slot.removeStyleName("max")
-                selectedItem.icon = FontAwesome.EXPAND
-                toggleMaximized(slot, false)
+                    label(content.caption) { // caption
+                        addStyleNames(ValoTheme.LABEL_H4, ValoTheme.LABEL_COLORED, ValoTheme.LABEL_NO_MARGIN)
+                        expandRatio = 1f
+                        alignment = Alignment.MIDDLE_LEFT
+                    }
+                    menuBar { // tools
+                        styleName = ValoTheme.MENUBAR_BORDERLESS
+                        val max = addItem("", FontAwesome.EXPAND, Command { selectedItem ->
+                            if (!slot.styleName.contains("max")) {
+                                selectedItem.icon = FontAwesome.COMPRESS
+                                toggleMaximized(slot, true)
+                            } else {
+                                slot.removeStyleName("max")
+                                selectedItem.icon = FontAwesome.EXPAND
+                                toggleMaximized(slot, false)
+                            }
+                        })
+                        max.styleName = "icon-only"
+                        val root = addItem("", FontAwesome.COG, null)
+                        root.addItem("Configure") { Notification.show("Not implemented in this demo") }
+                        root.addSeparator()
+                        root.addItem("Close") { Notification.show("Not implemented in this demo") }
+                    }
+                }
+                content.caption = null
+                addComponent(content)
             }
-        })
-        max.styleName = "icon-only"
-        val root = tools.addItem("", FontAwesome.COG, null)
-        root.addItem("Configure") { Notification.show("Not implemented in this demo") }
-        root.addSeparator()
-        root.addItem("Close") { Notification.show("Not implemented in this demo") }
+        }
 
-        toolbar.addComponents(caption, tools)
-        toolbar.setExpandRatio(caption, 1f)
-        toolbar.setComponentAlignment(caption, Alignment.MIDDLE_LEFT)
-
-        card.addComponents(toolbar, content)
-        slot.addComponent(card)
         return slot
     }
 
