@@ -1,6 +1,8 @@
 package com.vaadin.demo.dashboard.view.dashboard
 
 import com.github.vok.framework.vaadin.px
+import com.github.vok.framework.vaadin.textField
+import com.github.vok.framework.vaadin.verticalLayout
 import com.github.vok.framework.vaadin.w
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.server.Sizeable
@@ -21,7 +23,7 @@ import com.vaadin.ui.themes.ValoTheme
 class DashboardEdit(private val listener: DashboardEdit.DashboardEditListener,
                     currentName: String) : Window() {
 
-    private val nameField = TextField("Name")
+    private lateinit var nameField: TextField
 
     init {
         caption = "Edit Dashboard"
@@ -32,20 +34,13 @@ class DashboardEdit(private val listener: DashboardEdit.DashboardEditListener,
 
         addStyleName("edit-dashboard")
 
-        content = buildContent(currentName)
-    }
-
-    private fun buildContent(currentName: String): Component {
-        val result = VerticalLayout()
-
-        nameField.value = currentName
-        nameField.addStyleName("caption-on-left")
-        nameField.focus()
-
-        result.addComponent(nameField)
-        result.addComponent(buildFooter())
-
-        return result
+        verticalLayout {
+            nameField = textField("Name", currentName) {
+                addStyleName("caption-on-left")
+                focus()
+            }
+            addComponent(buildFooter())
+        }
     }
 
     private fun buildFooter(): Component {
