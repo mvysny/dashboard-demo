@@ -1,6 +1,8 @@
 package com.vaadin.demo.dashboard.view.dashboard
 
+import com.github.vok.framework.vaadin.addStyleNames
 import com.github.vok.framework.vaadin.px
+import com.github.vok.framework.vaadin.toggleStyleName
 import com.github.vok.framework.vaadin.w
 import com.google.common.eventbus.Subscribe
 import com.vaadin.demo.dashboard.DashboardUI
@@ -300,61 +302,13 @@ class DashboardView : Panel(), View, DashboardEditListener {
     }
 
     private fun toggleMaximized(panel: Component, maximized: Boolean) {
-        run {
-            val it = root.iterator()
-            while (it.hasNext()) {
-                it.next().isVisible = !maximized
-            }
-        }
+        root.forEach { it.isVisible = !maximized }
         dashboardPanels.isVisible = true
 
-        val it = dashboardPanels.iterator()
-        while (it.hasNext()) {
-            val c = it.next()
-            c.isVisible = !maximized
-        }
+        dashboardPanels.forEach { it.isVisible = !maximized }
 
-        if (maximized) {
-            panel.isVisible = true
-            panel.addStyleName("max")
-        } else {
-            panel.removeStyleName("max")
-        }
-    }
-
-    class NotificationsButton : Button() {
-        init {
-            icon = FontAwesome.BELL
-            id = ID
-            addStyleName("notifications")
-            addStyleName(ValoTheme.BUTTON_ICON_ONLY)
-            DashboardEventBus.register(this)
-        }
-
-        @Subscribe
-        fun updateNotificationsCount(
-                event: NotificationsCountUpdatedEvent?) {
-            setUnreadCount(DashboardUI.getDataProvider()
-                    .unreadNotificationsCount)
-        }
-
-        fun setUnreadCount(count: Int) {
-            caption = count.toString()
-
-            var description = "Notifications"
-            if (count > 0) {
-                addStyleName(STYLE_UNREAD)
-                description += " ($count unread)"
-            } else {
-                removeStyleName(STYLE_UNREAD)
-            }
-            setDescription(description)
-        }
-
-        companion object {
-            private val STYLE_UNREAD = "unread"
-            val ID = "dashboard-notifications"
-        }
+        panel.toggleStyleName("max", maximized)
+        if (maximized) panel.isVisible = true
     }
 
     companion object {
@@ -365,4 +319,34 @@ class DashboardView : Panel(), View, DashboardEditListener {
         val TITLE_ID = "dashboard-title"
     }
 
+}
+
+class NotificationsButton : Button() {
+    init {
+        icon = FontAwesome.BELL
+        id = ID
+        addStyleNames("notifications", ValoTheme.BUTTON_ICON_ONLY)
+        DashboardEventBus.register(this)
+    }
+
+    @Subscribe
+    fun updateNotificationsCount(
+            event: NotificationsCountUpdatedEvent?) {
+        setUnreadCount(DashboardUI.getDataProvider()
+                .unreadNotificationsCount)
+    }
+
+    fun setUnreadCount(count: Int) {
+        caption = count.toString()
+        toggleStyleName(STYLE_UNREAD, count > 0)
+
+        var description = "Notifications"
+        if (count > 0) description += " ($count unread)"
+        setDescription(description)
+    }
+
+    companion object {
+        private val STYLE_UNREAD = "unread"
+        val ID = "dashboard-notifications"
+    }
 }

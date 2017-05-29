@@ -3,7 +3,7 @@ package com.vaadin.demo.dashboard.tb.pageobjects;
 import org.openqa.selenium.WebDriver;
 
 import com.vaadin.demo.dashboard.view.dashboard.DashboardView;
-import com.vaadin.demo.dashboard.view.dashboard.DashboardView.NotificationsButton;
+import com.vaadin.demo.dashboard.view.dashboard.NotificationsButton;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.ButtonElement;
 import com.vaadin.testbench.elements.LabelElement;
