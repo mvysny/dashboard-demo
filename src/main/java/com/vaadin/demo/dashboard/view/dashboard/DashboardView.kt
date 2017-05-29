@@ -133,7 +133,11 @@ class DashboardView : Panel(), View, DashboardEditListener {
 
     private fun buildNotes(): Component {
         val notes = TextArea("Notes")
-        notes.value = "Remember to:\n· Zoom in and out in the Sales view\n· Filter the transactions and drag a set of them to the Reports tab\n· Create a new report\n· Change the schedule of the movie theater"
+        notes.value = """Remember to:
+· Zoom in and out in the Sales view
+· Filter the transactions and drag a set of them to the Reports tab
+· Create a new report
+· Change the schedule of the movie theater"""
         notes.setSizeFull()
         notes.addStyleName(ValoTheme.TEXTAREA_BORDERLESS)
         val panel = createContentWrapper(notes)
